@@ -260,7 +260,7 @@ if submit_button:
         
         
         # --- 2. Display Results ---
-        
+                
         st.subheader("VÝSLEDKY VÝPOČTU")
         st.markdown("---")
         
@@ -318,6 +318,72 @@ if submit_button:
              
         st.markdown("---")
         st.info('Děkujeme za vyplnění MCTQ dotazníku.')
+
+
+        # --- 3. Data Storage ---
+                
+        # 3.1. Create a dictionary of results
+        vd = {
+            'ID': dt.now().strftime('%Y-%m-%d_%H-%M-%S'), # Unique ID
+            'age': age,
+            'sex': sex,
+            'height': height,
+            'weight': weight,
+            'postal': postal,
+            'educ': educ,
+            'WD': WD,
+            'FD': FD,
+            'BTw': BTw.strftime('%H%M') if BTw else None,
+            'SPrepw': SPrepw.strftime('%H%M') if SPrepw else None,
+            'SLatwi': SLatwi,
+            'SEw': SEw.strftime('%H%M') if SEw else None,
+            'Alarmw': Alarmw,
+            'BAlarmw': BAlarmw,
+            'SIw': SIw,
+            'LEw': LEw,
+            'BTf': BTf.strftime('%H%M') if BTf else None,
+            'SPrepf': SPrepf.strftime('%H%M') if SPrepf else None,
+            'SLatfi': SLatfi,
+            'SEf': SEf.strftime('%H%M') if SEf else None,
+            'Alarmf': Alarmf,
+            'BAlarmf': BAlarmf,
+            'SIf': SIf,
+            'LEf': LEf,
+            'Slequal': Slequal_key, # Store the numerical key
+            'Bastart': Bastart.strftime('%H%M'),
+            'Baend_time': Baend_time.strftime('%H%M'),
+            'Baend_past_midnight': Baend_past_midnight,
+            'MSFsc': round(MSFsc, 3) if not np.isnan(MSFsc) else 'N/A',
+            'SJL': round(SJL, 3) if not np.isnan(SJL) else 'N/A',
+            'Bamid': round(Bamid, 3), 
+            # Add any other variables you want to save
+        }
+        
+        # 3.2. Connect and Save to Google Sheets
+        try:
+            import gspread
+            # NOTE: st.secrets is how Streamlit securely loads the credentials
+            gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
+
+            # Open the sheet by its ID (REPLACE THIS WITH YOUR ACTUAL SHEET ID)
+            SHEET_ID = "YOUR_GOOGLE_SHEET_ID_HERE"
+            workbook = gc.open_by_key(SHEET_ID)
+            worksheet = workbook.get_worksheet(0)  # Use the first sheet
+
+            # Append the row of values (ensuring order matches your sheet's header row)
+            # This is a critical step: ensure the keys in vd are the same as your SHEET HEADER!
+            header_keys = list(worksheet.row_values(1)) # Get the headers from the sheet
+            
+            # Map vd values to the order of header_keys
+            row_to_save = [vd.get(key, '') for key in header_keys] 
+            
+            worksheet.append_row(row_to_save)
+            
+            st.success("Data byla anonymně uložena pro další analýzu. Děkujeme!")
+
+        except Exception as sheet_error:
+            # st.error(f"Chyba při ukládání dat: {sheet_error}") # Comment out for public
+            st.warning("Data nebyla uložena. Děkujeme za vyplnění.")
         
     except Exception as e:
         st.error(f"Při výpočtu došlo k neočekávané chybě. Zkontrolujte prosím zadaná data. Detaily chyby: {e}")
