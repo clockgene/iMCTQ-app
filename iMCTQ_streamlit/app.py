@@ -366,7 +366,7 @@ if submit_button:
             gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
 
             # Open the sheet by its ID (REPLACE THIS WITH YOUR ACTUAL SHEET ID)
-            SHEET_ID = "YOUR_GOOGLE_SHEET_ID_HERE"
+            SHEET_ID = "https://docs.google.com/spreadsheets/d/10FfTOk_hLShUk1EEQi9ndBlZcbsME1ORfs7btm6IjDc/edit?usp=sharing"
             workbook = gc.open_by_key(SHEET_ID)
             worksheet = workbook.get_worksheet(0)  # Use the first sheet
 
