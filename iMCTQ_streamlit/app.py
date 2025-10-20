@@ -374,6 +374,7 @@ if submit_button:
             # Append the row of values (ensuring order matches your sheet's header row)
             # This is a critical step: ensure the keys in vd are the same as your SHEET HEADER!
             header_keys = list(worksheet.row_values(1)) # Get the headers from the sheet
+            print(header_keys)
             
             # Map vd values to the order of header_keys
             row_to_save = [vd.get(key, '') for key in header_keys] 
