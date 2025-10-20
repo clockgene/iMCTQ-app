@@ -66,10 +66,17 @@ with st.form("mctq_form"):
         postal = st.text_input("PSČ bydliště (zadejte bez mezery, např. 14800):", value="10000")
     with col6:
         # FIXED NameError: The format_func now correctly uses educ_options
+        # educ_key = st.selectbox("Dosažené vzdělání:", 
+        #                    options=educ_options.keys(),
+        #                    format_func=lambda x: f"{x} - {educ_options[x]}",
+        #                    index=2)
+
         educ_key = st.selectbox("Dosažené vzdělání:", 
-                            options=educ_options.keys(),
+                            options=list(educ_options.keys()), # Cast to list just in case
                             format_func=lambda x: f"{x} - {educ_options[x]}",
-                            index=2) 
+                            index=2, key='educ_select')
+
+        
         educ = educ_options[educ_key] # Store the text description if needed later
 
     st.header("2. Pracovní/Volné Dny")
@@ -157,9 +164,15 @@ with st.form("mctq_form"):
 
     st.header("3. Doplňující otázky")
     # FIXED NameError: The format_func now correctly uses slequal_options
+    # Slequal_key = st.radio("Je kvalita vašeho spánku:", 
+    #                    options=slequal_options.keys(),
+    #                    format_func=lambda x: f"{slequal_options[x]} ({x})")
+
     Slequal_key = st.radio("Je kvalita vašeho spánku:", 
-                       options=slequal_options.keys(),
-                       format_func=lambda x: f"{slequal_options[x]} ({x})")
+                       options=list(slequal_options.keys()), # Cast to list just in case
+                       format_func=lambda x: f"{slequal_options[x]} ({x})",
+                       key='slequal_radio')
+    
     Slequal = slequal_options[Slequal_key] # Store the text description if needed later
 
     Bastart = st.time_input("Kdy se během dne začínáte cítit psychicky nejaktivnější?", time(9, 0), key='Bastart')
@@ -330,7 +343,7 @@ if submit_button:
             'height': height,
             'weight': weight,
             'postal': postal,
-            'educ': educ,
+            'educ': educ_key, # Store the numerical key - originally: educ
             'WD': WD,
             'FD': FD,
             'BTw': BTw.strftime('%H%M') if BTw else None,
