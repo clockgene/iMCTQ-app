@@ -369,7 +369,9 @@ if submit_button:
             # SHEET_ID = "https://docs.google.com/spreadsheets/d/10FfTOk_hLShUk1EEQi9ndBlZcbsME1ORfs7btm6IjDc/edit?usp=sharing"
             SHEET_ID = "10FfTOk_hLShUk1EEQi9ndBlZcbsME1ORfs7btm6IjDc"
             workbook = gc.open_by_key(SHEET_ID)
-            worksheet = workbook.get_worksheet(0)  # Use the first sheet
+            # worksheet = workbook.get_worksheet(0)  # Use the first sheet
+            SHEET_NAME = "iMCTQ_streamlit_responses_2025"
+            worksheet = workbook.worksheet(SHEET_NAME)  # Use the first sheet
 
             # Append the row of values (ensuring order matches your sheet's header row)
             # This is a critical step: ensure the keys in vd are the same as your SHEET HEADER!
@@ -385,7 +387,7 @@ if submit_button:
 
         except Exception as sheet_error:
             # st.error(f"Chyba při ukládání dat: {sheet_error}") # Comment out for public
-            st.warning("Data nebyla uložena. Děkujeme za vyplnění.")
+            st.warning(f"Data nebyla uložena. Děkujeme za vyplnění. {header_keys}")
         
     except Exception as e:
         st.error(f"Při výpočtu došlo k neočekávané chybě. Zkontrolujte prosím zadaná data. Detaily chyby: {e}")
