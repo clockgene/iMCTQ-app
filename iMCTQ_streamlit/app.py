@@ -343,7 +343,7 @@ if submit_button:
             'height': height,
             'weight': weight,
             'postal': postal,
-            'educ': educ_key, # Store the numerical key - originally: educ
+            #'educ': educ_key, # Store the numerical key - originally: educ
             'WD': WD,
             'FD': FD,
             'BTw': BTw.strftime('%H%M') if BTw else None,
@@ -362,7 +362,7 @@ if submit_button:
             'BAlarmf': BAlarmf,
             'SIf': SIf,
             'LEf': LEf,
-            'Slequal': Slequal_key, # Store the numerical key
+            #'Slequal': Slequal_key, # Store the numerical key
             'Bastart': Bastart.strftime('%H%M'),
             'Baend_time': Baend_time.strftime('%H%M'),
             'Baend_past_midnight': Baend_past_midnight,
