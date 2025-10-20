@@ -386,7 +386,7 @@ if submit_button:
             st.success("Data byla anonymně uložena pro další analýzu. Děkujeme!")
 
         except Exception as sheet_error:
-            # st.error(f"Chyba při ukládání dat: {sheet_error}") # Comment out for public
+            st.error(f"Chyba při ukládání dat: {sheet_error}") # Comment out for public
             st.warning(f"Data nebyla uložena. Děkujeme za vyplnění. {header_keys}")
         
     except Exception as e:
