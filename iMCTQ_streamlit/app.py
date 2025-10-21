@@ -66,12 +66,6 @@ with st.form("mctq_form"):
         # Changed to text input as postal codes start with a zero in some countries
         postal = st.text_input("PSČ bydliště (zadejte bez mezery, např. 14800):", value="10000")
     with col6:
-        # FIXED NameError: The format_func now correctly uses educ_options
-        # educ_key = st.selectbox("Dosažené vzdělání:", 
-        #                    options=educ_options.keys(),
-        #                    format_func=lambda x: f"{x} - {educ_options[x]}",
-        #                    index=2)
-
         educ_key = st.selectbox("Dosažené vzdělání:", 
                             options=list(educ_options.keys()), # Cast to list just in case
                             format_func=lambda x: f"{x} - {educ_options[x]}",
@@ -181,6 +175,23 @@ with st.form("mctq_form"):
         Baend_time = st.time_input("Čas (HH:MM):", time(17, 0), key='Baend_time')
     with col_ba2:
         Baend_past_midnight = st.checkbox("Čas je po půlnoci (např. 01:00 ráno)")
+
+
+    # Shifts and travel
+    Shift = st.radio("Pracoval jste v posledních 3 měsících na směny (tj. mimo obyklou pracovní dobu)?", 
+                              [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='Shift')
+
+    col_sh1, col_sh2 = st.columns(2)
+    with col_sh1:
+        Shifts = st.time_input("V kolik hodin obvykle začala vaše směna?", time(0, 30), key='Shifts')
+    with col_f2:
+        Shifte = st.time_input("V kolik hodin obvykle zkončila vaše směna??", time(6, 0), key='Shifte')
+
+
+    Travel = st.radio("Cestoval jste během posledního měsíce letecky do zahraničí přes 3 nebo více časových pásem?", 
+                              [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='Travel',
+                                  help="Tedy dále na západ/východ než např. na Island, Kanárské ostrovy, do Dubaje nebo na africký kontinent.")    
+    
         
     submit_button = st.form_submit_button("Vypočítat chronotyp")
 
@@ -343,29 +354,33 @@ if submit_button:
             'educ': educ_key, # Store the numerical key - originally: educ
             'WD': WD,
             'FD': FD,
-            'BTw': BTw.strftime('%H%M') if BTw else None,
-            'SPrepw': SPrepw.strftime('%H%M') if SPrepw else None,
+            'BTw': BTw.strftime('%H-%M') if BTw else None,
+            'SPrepw': SPrepw.strftime('%H-%M') if SPrepw else None,
             'SLatwi': SLatwi,
-            'SEw': SEw.strftime('%H%M') if SEw else None,
+            'SEw': SEw.strftime('%H-%M') if SEw else None,
             'Alarmw': Alarmw,
             'BAlarmw': BAlarmw,
             'SIw': SIw,
             'LEw': LEw,
-            'BTf': BTf.strftime('%H%M') if BTf else None,
-            'SPrepf': SPrepf.strftime('%H%M') if SPrepf else None,
+            'BTf': BTf.strftime('%H-%M') if BTf else None,
+            'SPrepf': SPrepf.strftime('%H-%M') if SPrepf else None,
             'SLatfi': SLatfi,
-            'SEf': SEf.strftime('%H%M') if SEf else None,
+            'SEf': SEf.strftime('%H-%M') if SEf else None,
             'Alarmf': Alarmf,
             'BAlarmf': BAlarmf,
             'SIf': SIf,
             'LEf': LEf,
             'Slequal': Slequal_key, # Store the numerical key
-            'Bastart': Bastart.strftime('%H%M'),
-            'Baend_time': Baend_time.strftime('%H%M'),
+            'Bastart': Bastart.strftime('%H-%M'),
+            'Baend_time': Baend_time.strftime('%H-%M'),
             'Baend_past_midnight': Baend_past_midnight,
             'MSFsc': round(MSFsc, 3) if not np.isnan(MSFsc) else 'N/A',
             'SJL': round(SJL, 3) if not np.isnan(SJL) else 'N/A',
-            'Bamid': round(Bamid, 3), 
+            'Bamid': round(Bamid, 3),
+            'Shift': Shift,
+            'Shifts': Shifts.strftime('%H-%M') if Shifts else None,
+            'Shifte': Shifte.strftime('%H-%M') if Shifte else None,
+            'Travel': Travel
             # Add any other variables you want to save
         }
         
