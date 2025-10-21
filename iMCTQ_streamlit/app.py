@@ -389,7 +389,7 @@ if submit_button:
             'Shifts': Shifts.strftime('%H-%M') if Shifts else None,
             'Shifts_past_midnight': Shifts_past_midnight,
             'Shifte': Shifte.strftime('%H-%M') if Shifte else None,
-            'Shifte_past_midnight': Shifte_past_midnight
+            'Shifte_past_midnight': Shifte_past_midnight,
             'Travel': Travel
             # Add any other variables you want to save
         }
