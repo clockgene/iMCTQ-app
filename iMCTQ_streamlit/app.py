@@ -29,10 +29,10 @@ def calculate_sleep_duration(time_start, time_end):
     duration = end_dt - start_dt
     return duration, end_dt # Return both duration and corrected end time
 
-# --- Options Dictionaries (FIXED NameError: name 'educ' is not defined) ---
+# --- Options Dictionaries ---
 educ_options = {
     1:'základní nebo neúplné', 2:'vyučení', 3:'střední nebo střední odborné', 
-    4:'vyšší odborné', 5:'VŠ bakalářské', 6:'VŠ Mgr/Ing/MUDr/apod.', 7:'VŠ postgraduální PhD'
+    4:'vyšší odborné', 5:'VŠ bakalářské', 6:'VŠ Mgr/Ing/MUDr/MBA/apod.', 7:'VŠ postgraduální PhD'
 }
 slequal_options = {
     1:'velmi dobrá', 2:'spíše dobrá', 3:'spíše špatná', 4:'velmi špatná'
@@ -101,7 +101,7 @@ with st.form("mctq_form"):
     
     # --- Working Days (VŠEDNÍ DNY) Block ---
     if WD > 0 and WD < 8:
-        st.subheader("2.1. Režim během **VŠEDNÍCH** dnů ({} dní)".format(WD))
+        st.subheader("2.1. Režim během **VŠEDNÍCH** (pracovních) dnů ({})".format(WD))
         
         col_w1, col_w2, col_w3 = st.columns(3)
         with col_w1:
@@ -134,7 +134,7 @@ with st.form("mctq_form"):
 
     # --- Free Days (VOLNÉ DNY) Block ---
     if WD >= 0 and WD < 7:
-        st.subheader("2.2. Režim během **VOLNÝCH** dnů ({} dní)".format(FD))
+        st.subheader("2.2. Režim během **VOLNÝCH** (víkendových) dnů ({})".format(FD))
         
         col_f1, col_f2, col_f3 = st.columns(3)
         with col_f1:
@@ -164,10 +164,6 @@ with st.form("mctq_form"):
 
 
     st.header("3. Doplňující otázky")
-    # FIXED NameError: The format_func now correctly uses slequal_options
-    # Slequal_key = st.radio("Je kvalita vašeho spánku:", 
-    #                    options=slequal_options.keys(),
-    #                    format_func=lambda x: f"{slequal_options[x]} ({x})")
 
     Slequal_key = st.radio("Je kvalita vašeho spánku:", 
                        options=list(slequal_options.keys()), # Cast to list just in case
@@ -338,13 +334,13 @@ if submit_button:
                 
         # 3.1. Create a dictionary of results
         vd = {
-            'ID': dt.now().strftime('%Y-%m-%d_%H-%M-%S'), # Unique ID
+            'ID': dt.now().strftime('%Y-%m-%d_%H-%M-%S.%f'), # Unique ID
             'age': age,
             'sex': sex,
             'height': height,
             'weight': weight,
             'postal': postal,
-            # 'educ': educ_key, # Store the numerical key - originally: educ
+            'educ': educ_key, # Store the numerical key - originally: educ
             'WD': WD,
             'FD': FD,
             'BTw': BTw.strftime('%H%M') if BTw else None,
@@ -363,7 +359,7 @@ if submit_button:
             'BAlarmf': BAlarmf,
             'SIf': SIf,
             'LEf': LEf,
-            # 'Slequal': Slequal_key, # Store the numerical key
+            'Slequal': Slequal_key, # Store the numerical key
             'Bastart': Bastart.strftime('%H%M'),
             'Baend_time': Baend_time.strftime('%H%M'),
             'Baend_past_midnight': Baend_past_midnight,
