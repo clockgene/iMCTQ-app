@@ -159,14 +159,14 @@ with st.form("mctq_form"):
 
     st.header("3. Doplňující otázky")
 
-    Slequal_key = st.radio("Je kvalita vašeho spánku:", 
+    Slequal_key = st.radio("**Je kvalita vašeho spánku:**", 
                        options=list(slequal_options.keys()), # Cast to list just in case
                        format_func=lambda x: f"{slequal_options[x]} ({x})",
                        key='slequal_radio')
     
     Slequal = slequal_options[Slequal_key] # Store the text description if needed later
 
-    Bastart = st.time_input("Kdy se během dne začínáte cítit psychicky nejaktivnější?", time(9, 0), key='Bastart')
+    Bastart = st.time_input("**Kdy se během dne začínáte cítit psychicky nejaktivnější?**", time(9, 0), key='Bastart')
     
     # Custom handling for Baend (can be past midnight)
     st.markdown("**Kdy se během dne přestáváte cítit psychicky nejaktivnější?**")
@@ -178,22 +178,30 @@ with st.form("mctq_form"):
 
 
     # Shifts and travel
-    Shift = st.radio("Pracoval jste v posledních 3 měsících na směny (tj. mimo obyklou pracovní dobu)?", 
+    Shift = st.radio("**Pracoval jste v posledních 3 měsících na směny (tj. mimo obyklou pracovní dobu)?**", 
                               [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='Shift')
 
+    st.markdown("V kolik hodin obvykle začala vaše směna?")
     col_sh1, col_sh2 = st.columns(2)
     with col_sh1:
-        Shifts = st.time_input("V kolik hodin obvykle začala vaše směna?", time(0, 30), key='Shifts')
-    with col_f2:
-        Shifte = st.time_input("V kolik hodin obvykle zkončila vaše směna??", time(6, 0), key='Shifte')
+        Shifts = st.time_input("Čas (HH:MM):", time(23, 0), key='Shifts')
+    with col_sh2:
+        Shifts_past_midnight = st.checkbox("Čas je po půlnoci (např. 01:00 ráno)")
+
+    st.markdown("V kolik hodin obvykle zkončila vaše směna?")
+    col_se1, col_se2 = st.columns(2)
+    with col_se1:
+        Shifte = st.time_input("Čas (HH:MM):", time(3, 0), key='Shifte')
+    with col_se2:
+        Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)")
 
 
-    Travel = st.radio("Cestoval jste během posledního měsíce letecky do zahraničí přes 3 nebo více časových pásem?", 
+    Travel = st.radio("**Cestoval jste během posledního měsíce letecky do zahraničí přes 3 nebo více časových pásem?**", 
                               [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='Travel',
                                   help="Tedy dále na západ/východ než např. na Island, Kanárské ostrovy, do Dubaje nebo na africký kontinent.")    
     
         
-    submit_button = st.form_submit_button("Vypočítat chronotyp")
+    submit_button = st.form_submit_button("**Vypočítat chronotyp**")
 
 # --- Calculation and Output Block ---
 
@@ -379,7 +387,9 @@ if submit_button:
             'Bamid': round(Bamid, 3),
             'Shift': Shift,
             'Shifts': Shifts.strftime('%H-%M') if Shifts else None,
+            'Shifts_past_midnight': Shifts_past_midnight,
             'Shifte': Shifte.strftime('%H-%M') if Shifte else None,
+            'Shifte_past_midnight': Shifte_past_midnight
             'Travel': Travel
             # Add any other variables you want to save
         }
