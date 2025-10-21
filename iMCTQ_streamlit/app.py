@@ -373,35 +373,69 @@ if submit_button:
             # Add any other variables you want to save
         }
         
-        # 3.2. Connect and Save to Google Sheets
+        # --- 3.2. Connect and Save to Google Sheets (robust) ---
+        import json
+        import traceback
+
+        header_keys = []  # ensure defined for later error messages
+
         try:
-            
-            # NOTE: st.secrets is how Streamlit securely loads the credentials
-            gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
+            # Load credentials from st.secrets
+            gcp_sa = st.secrets.get("gcp_service_account")
+            if gcp_sa is None:
+                raise RuntimeError("st.secrets['gcp_service_account'] not found. See instructions for setting secrets.")
 
-            # Open the sheet by its ID (REPLACE THIS WITH YOUR ACTUAL SHEET ID)
-            # SHEET_ID = "https://docs.google.com/spreadsheets/d/10FfTOk_hLShUk1EEQi9ndBlZcbsME1ORfs7btm6IjDc/edit?usp=sharing"
-            SHEET_ID = "10FfTOk_hLShUk1EEQi9ndBlZcbsME1ORfs7btm6IjDc"
+            # gspread.service_account_from_dict expects a dict. If it's a JSON string, parse it.
+            if isinstance(gcp_sa, str):
+                try:
+                    gcp_sa = json.loads(gcp_sa)
+                except Exception:
+                    raise RuntimeError("gcp_service_account in st.secrets is a string but not valid JSON.")
+
+            # Use gspread helper
+            gc = gspread.service_account_from_dict(gcp_sa)
+
+            # Open workbook
+            SHEET_ID = "10FfTOk_hLShUk1EEQi9ndBlZcbsME1ORfs7btm6IjDc"  # keep your value
             workbook = gc.open_by_key(SHEET_ID)
-            # worksheet = workbook.get_worksheet(0)  # Use the first sheet
-            SHEET_NAME = "iMCTQ_streamlit_responses_2025"
-            worksheet = workbook.worksheet(SHEET_NAME)  # Use this specific sheet
 
-            # Append the row of values (ensuring order matches your sheet's header row)
-            # This is a critical step: ensure the keys in vd are the same as your SHEET HEADER!
-            header_keys = list(worksheet.row_values(1)) # Get the headers from the sheet
-            print(header_keys)
-            
-            # Map vd values to the order of header_keys
-            row_to_save = [vd.get(key, '') for key in header_keys] 
-            
-            worksheet.append_row(row_to_save)
-            
+            # Try to get worksheet by name; if missing, list available sheets for debugging
+            SHEET_NAME = "iMCTQ_streamlit_responses_2025"
+            try:
+                worksheet = workbook.worksheet(SHEET_NAME)
+            except gspread.exceptions.WorksheetNotFound:
+                # helpful debug info
+                available = [s.title for s in workbook.worksheets()]
+                raise RuntimeError(f"Worksheet named '{SHEET_NAME}' not found. Available sheets: {available}")
+
+            # read header row (guaranteed defined now)
+            header_keys = worksheet.row_values(1)
+            if not header_keys:
+                raise RuntimeError("Header row (row 1) is empty. Please add header names to the first row in the sheet.")
+
+            # map vd keys into the order of header
+            row_to_save = [vd.get(key, "") for key in header_keys]
+
+            # Append row (use USER_ENTERED so Google parses numbers/dates)
+            worksheet.append_row(row_to_save, value_input_option='USER_ENTERED')
+
             st.success("Data byla anonymně uložena pro další analýzu. Děkujeme!")
 
         except Exception as sheet_error:
-            st.error(f"Chyba při ukládání dat: {sheet_error}") # Comment out for public
-            st.warning(f"Data nebyla uložena. Děkujeme za vyplnění. {header_keys}")
+            # Provide rich diagnostics
+            st.error("Chyba při ukládání do Google Sheets.")
+            st.write("**Diagnostika chyby (pro vývojáře):**")
+            st.write(str(sheet_error))
+            # show traceback for debugging (remove in production)
+            tb = traceback.format_exc()
+            st.text(tb)
+            # helpful hints
+            st.warning(
+                "Zkontrolujte: 1) že jste sdíleli Google Sheet s e-mailem service accountu (Editor), "
+                "2) že v GCP máte povolenou Google Sheets API, "
+                "3) že SHEET_NAME existuje a header je ve 1. řádku a nakonec "
+                "4) že st.secrets['gcp_service_account'] má správný obsah (viz instrukce)."
+            )
         
     except Exception as e:
         st.error(f"Při výpočtu došlo k neočekávané chybě. Zkontrolujte prosím zadaná data. Detaily chyby: {e}")
