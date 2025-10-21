@@ -201,7 +201,7 @@ with st.form("mctq_form"):
                                   help="Tedy dále na západ/východ než např. na Island, Kanárské ostrovy, do Dubaje nebo na africký kontinent.")    
     
         
-    submit_button = st.form_submit_button("**Vypočítat chronotyp**")
+    submit_button = st.form_submit_button("Vypočítat chronotyp")
 
 # --- Calculation and Output Block ---
 
@@ -460,3 +460,4 @@ if submit_button:
         
     except Exception as e:
         st.error(f"Při výpočtu došlo k neočekávané chybě. Zkontrolujte prosím zadaná data. Detaily chyby: {e}")
+
