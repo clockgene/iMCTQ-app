@@ -460,4 +460,3 @@ if submit_button:
         
     except Exception as e:
         st.error(f"Při výpočtu došlo k neočekávané chybě. Zkontrolujte prosím zadaná data. Detaily chyby: {e}")
-
