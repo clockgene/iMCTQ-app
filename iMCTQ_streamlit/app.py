@@ -186,14 +186,14 @@ with st.form("mctq_form"):
     with col_sh1:
         Shifts = st.time_input("Čas (HH:MM):", time(23, 0), key='Shifts')
     with col_sh2:
-        Shifts_past_midnight = st.checkbox("Čas je po půlnoci (např. 01:00 ráno)")
+        Shifts_past_midnight = st.checkbox("Čas je po půlnoci (např. 01:00 ráno)", key='Shifts_past_midnight')
 
     st.markdown("V kolik hodin obvykle zkončila vaše směna?")
     col_se1, col_se2 = st.columns(2)
     with col_se1:
         Shifte = st.time_input("Čas (HH:MM):", time(3, 0), key='Shifte')
     with col_se2:
-        Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)")
+        Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)", key='Shifte_past_midnight')
 
 
     Travel = st.radio("**Cestoval jste během posledního měsíce letecky do zahraničí přes 3 nebo více časových pásem?**", 
