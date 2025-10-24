@@ -1,3 +1,4 @@
+# v.2025.10.24.1003
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -106,16 +107,24 @@ with st.form("mctq_form"):
         with col_w3:
             SLatwi = st.number_input("Kolik minut vám obvykle trvá usnout?", min_value=0, value=15, key='SLatwi')
         
-        SEw = st.time_input("V kolik hodin se obvykle probouzíte ve všední dny?", time(7, 0), key='SEw')
-        
-        Alarmw = st.radio("Používáte obvykle budík ve všední dny?", [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=0, key='Alarmw')
-        
+        SEw = st.time_input("V kolik hodin se obvykle probouzíte ve všední dny?", time(7, 0), key='SEw')        
+                
+        Alarmw = st.radio(
+            "Používáte obvykle budík ve všední dny?",
+            [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne',
+            index=0, key='Alarmw'
+        )
+    
+        # Interactive question — outside the form logic
         if Alarmw == 1:
-            BAlarmw = st.radio("Probouzíte se pravidelně před tím, než budík zazvoní?", [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='BAlarmw')
-        
+            BAlarmw = st.radio(
+                "Probouzíte se pravidelně před tím, než budík zazvoní?",
+                [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne',
+                index=1, key='BAlarmw'
+            )
         else:
-            BAlarmw = 0
-        
+            BAlarmw = 0        
+                
         SIw = st.number_input("Za kolik minut vstanete po probuzení z postele ve všední dny?", min_value=0, value=5, key='SIw')
         
         st.markdown("Jak dlouhou dobu strávíte venku na přirozeném světle ve všední den?")
@@ -145,13 +154,13 @@ with st.form("mctq_form"):
         SEf = st.time_input("V kolik hodin se obvykle probouzíte ve volné dny?", time(9, 0), key='SEf')
         
         Alarmf = st.radio("Máte nějaký důvod, kvůli kterému si nemůžete zvolit čas pro spánek a probouzení ve volné dny?", 
-                          [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='Alarmf')
+                          [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=0, key='Alarmf')
         
         if Alarmf == 1:
             BAlarmf = st.radio("Potřebujete obvykle k probuzení ve volný den použít budík?", [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='BAlarmf')
             
         else:
-            BAlarmf = 1
+            BAlarmf = 0
             
         SIf = st.number_input("Za kolik minut vstanete po probuzení z postele ve volné dny?", min_value=0, value=10, key='SIf')
         
