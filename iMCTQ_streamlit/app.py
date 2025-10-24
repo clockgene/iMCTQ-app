@@ -1,4 +1,4 @@
-# v.2025.10.24.1222
+# v.2025.10.24.1227
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1222.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1227.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
@@ -137,7 +137,7 @@ with st.form("mctq_form"):
         # --- Alarm logic (interactive via session state) ---        
         Alarmw = st.radio("Používáte obvykle budík ve všední dny?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="Alarmw")
         
-        with st.expander("📅 Pokud ano:"):
+        with st.expander("📅 Pokud ano:", expanded=False):
             BAlarmw = st.radio("Probouzíte se pravidelně před tím, než budík zazvoní?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="BAlarmw")        
         
 
@@ -175,7 +175,7 @@ with st.form("mctq_form"):
         Alarmf = st.radio("Máte nějaký důvod, kvůli kterému si nemůžete zvolit čas pro spánek a probouzení ve volné dny?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="Alarmf")
         
         # Careful - BAlarmf has opposite meaninf to BAlarmw, used only in MSFsc calculation logic, do not use for analysis
-        with st.expander("📅 Pokud ano:"):
+        with st.expander("📅 Pokud ano:", expanded=False):
             BAlarmf = st.radio("Potřebujete k probuzení ve volný den obvykle použít budík?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="BAlarmf")                
 
         SIf = st.number_input(
@@ -216,19 +216,37 @@ with st.form("mctq_form"):
     Shift = st.radio("**Pracoval jste v posledních 3 měsících na směny (tj. mimo obyklou pracovní dobu)?**", 
                               [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='Shift')
 
-    st.markdown("V kolik hodin obvykle začala vaše směna?")
-    col_sh1, col_sh2 = st.columns(2)
-    with col_sh1:
-        Shifts = st.time_input("Čas (HH:MM):", time(23, 0), key='Shifts')
-    with col_sh2:
-        Shifts_past_midnight = st.checkbox("Čas je po půlnoci (např. 01:00 ráno)", key='Shifts_past_midnight')
+    
+    with st.expander("📅 Pokud ano:", expanded=False):                
+        
+        st.markdown("V kolik hodin obvykle začala vaše směna?")
+        col_sh1, col_sh2 = st.columns(2)
+        with col_sh1:
+            Shifts = st.time_input("Čas (HH:MM):", time(23, 0), key='Shifts')
+        with col_sh2:
+            Shifts_past_midnight = st.checkbox("Čas je po půlnoci (např. 01:00 ráno)", key='Shifts_past_midnight')
+    
+        st.markdown("V kolik hodin obvykle zkončila vaše směna?")
+        col_se1, col_se2 = st.columns(2)
+        with col_se1:
+            Shifte = st.time_input("Čas (HH:MM):", time(3, 0), key='Shifte')
+        with col_se2:
+            Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)", key='Shifte_past_midnight')
+    
+    
+    # st.markdown("V kolik hodin obvykle začala vaše směna?")
+    # col_sh1, col_sh2 = st.columns(2)
+    # with col_sh1:
+    #     Shifts = st.time_input("Čas (HH:MM):", time(23, 0), key='Shifts')
+    # with col_sh2:
+    #     Shifts_past_midnight = st.checkbox("Čas je po půlnoci (např. 01:00 ráno)", key='Shifts_past_midnight')
 
-    st.markdown("V kolik hodin obvykle zkončila vaše směna?")
-    col_se1, col_se2 = st.columns(2)
-    with col_se1:
-        Shifte = st.time_input("Čas (HH:MM):", time(3, 0), key='Shifte')
-    with col_se2:
-        Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)", key='Shifte_past_midnight')
+    # st.markdown("V kolik hodin obvykle zkončila vaše směna?")
+    # col_se1, col_se2 = st.columns(2)
+    # with col_se1:
+    #     Shifte = st.time_input("Čas (HH:MM):", time(3, 0), key='Shifte')
+    # with col_se2:
+    #     Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)", key='Shifte_past_midnight')
 
 
     Travel = st.radio("**Cestoval jste během posledního měsíce letecky do zahraničí přes 3 nebo více časových pásem?**", 
