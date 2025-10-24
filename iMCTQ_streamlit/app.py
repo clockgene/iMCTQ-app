@@ -1,4 +1,4 @@
-# v.2025.10.24.1227
+# v.2025.10.24.1239
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1227.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1239.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
@@ -204,7 +204,7 @@ with st.form("mctq_form"):
     Bastart = st.time_input("**Kdy se během dne začínáte cítit psychicky nejaktivnější?**", time(9, 0), key='Bastart')
     
     # Custom handling for Baend (can be past midnight)
-    st.markdown("**Kdy se během dne přestáváte cítit psychicky nejaktivnější?**")
+    st.markdown("Kdy se během dne přestáváte cítit psychicky nejaktivnější?")
     col_ba1, col_ba2 = st.columns(2)
     with col_ba1:
         Baend_time = st.time_input("Čas (HH:MM):", time(17, 0), key='Baend_time')
