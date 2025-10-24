@@ -1,4 +1,4 @@
-# v.2025.10.24.1126
+# v.2025.10.24.1130
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1126.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1130.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
@@ -103,12 +103,20 @@ with st.form("mctq_form"):
     # --- Initialize all conditional variables to None/safe values ---
     # This prevents NameErrors if a block is skipped
     BTw, SPrepw, SLatwi, SEw = None, None, 15, None
-    Alarmw, BAlarmw, SIw = 0, 0, 5
+    Alarmw, BAlarmw, SIw = 1, 0, 5
     LEwh, LEwm, LEw = 0, 0, 0.0
     
     BTf, SPrepf, SLatfi, SEf = None, None, 15, None
     Alarmf, BAlarmf, SIf = 0, 0, 10
     LEfh, LEfm, LEf = 0, 0, 0.0    
+    
+    # --- Initialize session state variables safely ---
+    for key, default in {
+        "Alarmw": 1,
+        "Alarmf": 0,
+    }.items():
+        if key not in st.session_state:
+            st.session_state[key] = default
 
     # --- Working Days (VŠEDNÍ DNY) Block ---
     if 0 < WD < 8:
