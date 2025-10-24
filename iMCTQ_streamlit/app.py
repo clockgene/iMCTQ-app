@@ -1,4 +1,4 @@
-# v.2025.10.24.1056
+# v.2025.10.24.1126
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1056.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1126.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
@@ -90,8 +90,9 @@ with st.form("mctq_form"):
 
         
         educ = educ_options[educ_key] # Store the text description if needed later
-
-    st.header("2. Pracovní/Volné Dny")
+   
+    
+    st.header("2. Spánkový režim")
     
     WD = st.number_input("Kolik dní v týdnu (0 až 7) máte pravidelný pracovní rozvrh?", 
                          min_value=0, max_value=8, value=5, step=1, 
@@ -107,14 +108,12 @@ with st.form("mctq_form"):
     
     BTf, SPrepf, SLatfi, SEf = None, None, 15, None
     Alarmf, BAlarmf, SIf = 0, 0, 10
-    LEfh, LEfm, LEf = 0, 0, 0.0
+    LEfh, LEfm, LEf = 0, 0, 0.0    
 
-    
     # --- Working Days (VŠEDNÍ DNY) Block ---
+    if 0 < WD < 8:
+        st.subheader(f"2.1. Režim během **VŠEDNÍCH** (pracovních) dnů ({WD})")
 
-    if WD > 0 and WD < 8:
-        st.subheader("2.1. Režim během **VŠEDNÍCH** (pracovních) dnů ({})".format(WD))
-        
         col_w1, col_w2, col_w3 = st.columns(3)
         with col_w1:
             BTw = st.time_input("V kolik hodin si chodíte obvykle lehnout do postele?", time(23, 0), key='BTw')
@@ -122,43 +121,50 @@ with st.form("mctq_form"):
             SPrepw = st.time_input("V kolik hodin se obvykle připravujete ke spánku (zhasnete světlo)?", time(23, 30), key='SPrepw')
         with col_w3:
             SLatwi = st.number_input("Kolik minut vám obvykle trvá usnout?", min_value=0, value=15, key='SLatwi')
-        
-        SEw = st.time_input("V kolik hodin se obvykle probouzíte ve všední dny?", time(7, 0), key='SEw')        
-                
+
+        SEw = st.time_input("V kolik hodin se obvykle probouzíte ve všední dny?", time(7, 0), key='SEw')
+
+        # --- Alarm logic (interactive via session state) ---
         Alarmw = st.radio(
             "Používáte obvykle budík ve všední dny?",
-            [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne',
-            index=0, key='Alarmw'
+            [1, 0],
+            format_func=lambda x: 'Ano' if x == 1 else 'Ne',
+            index=st.session_state.Alarmw,
+            key='Alarmw_radio'
         )
-    
-        # Interactive question — outside the form logic
-        if Alarmw == 1:
+        st.session_state.Alarmw = Alarmw  # persist selection
+
+        if st.session_state.Alarmw == 1:
             BAlarmw = st.radio(
                 "Probouzíte se pravidelně před tím, než budík zazvoní?",
-                [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne',
-                index=0, key='BAlarmw'
+                [1, 0],
+                format_func=lambda x: 'Ano' if x == 1 else 'Ne',
+                index=1,
+                key='BAlarmw'
             )
         else:
-            BAlarmw = 1     
-                
-        SIw = st.number_input("Za kolik minut vstanete po probuzení z postele ve všední dny?", min_value=0, value=5, key='SIw')
-        
+            BAlarmw = None
+
+        SIw = st.number_input(
+            "Za kolik minut vstanete po probuzení z postele ve všední dny?",
+            min_value=0, value=5, key='SIw'
+        )
+
         st.markdown("Jak dlouhou dobu strávíte venku na přirozeném světle ve všední den?")
         col_le_w1, col_le_w2 = st.columns(2)
         with col_le_w1:
             LEwh = st.number_input("Hodiny:", min_value=0, value=0, key='LEwh')
         with col_le_w2:
             LEwm = st.number_input("Minuty:", min_value=0, max_value=59, value=30, key='LEwm')
-        LEw = LEwh + LEwm/60
+        LEw = LEwh + LEwm / 60
 
     elif WD == 8:
         st.warning("Váš chronotyp nelze bohužel určit kvůli zcela nepravidelnému rozvrhu.")
 
-
     # --- Free Days (VOLNÉ DNY) Block ---
-    if WD >= 0 and WD < 7:
-        st.subheader("2.2. Režim během **VOLNÝCH** (víkendových) dnů ({})".format(FD))
-        
+    if 0 <= WD < 7:
+        st.subheader(f"2.2. Režim během **VOLNÝCH** (víkendových) dnů ({FD})")
+
         col_f1, col_f2, col_f3 = st.columns(3)
         with col_f1:
             BTf = st.time_input("V kolik hodin si chodíte obvykle lehnout do postele (volný den)?", time(0, 30), key='BTf')
@@ -166,28 +172,43 @@ with st.form("mctq_form"):
             SPrepf = st.time_input("V kolik hodin se obvykle připravujete ke spánku (zhasnete světlo, volný den)?", time(1, 0), key='SPrepf')
         with col_f3:
             SLatfi = st.number_input("Kolik minut vám obvykle trvá usnout (volný den)?", min_value=0, value=15, key='SLatfi')
-            
+
         SEf = st.time_input("V kolik hodin se obvykle probouzíte ve volné dny?", time(9, 0), key='SEf')
-        
-        Alarmf = st.radio("Máte nějaký důvod, kvůli kterému si nemůžete zvolit čas pro spánek a probouzení ve volné dny, proto musíte používat budík?", 
-                          [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=0, key='Alarmf')
-        
-        if Alarmf == 1:
-            BAlarmf = st.radio("Probouzíte se pravidelně před tím, než budík zazvoní i ve volné dny?", [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=0, key='BAlarmf')
-            
+
+        # --- Alarm logic (interactive via session state) ---
+        Alarmf = st.radio(
+            "Máte nějaký důvod, kvůli kterému si nemůžete zvolit čas pro spánek a probouzení ve volné dny?",
+            [1, 0],
+            format_func=lambda x: 'Ano' if x == 1 else 'Ne',
+            index=st.session_state.Alarmf,
+            key='Alarmf_radio'
+        )
+        st.session_state.Alarmf = Alarmf
+
+        if st.session_state.Alarmf == 1:
+            BAlarmf = st.radio(
+                "Potřebujete obvykle k probuzení ve volný den použít budík?",
+                [1, 0],
+                format_func=lambda x: 'Ano' if x == 1 else 'Ne',
+                index=1,
+                key='BAlarmf'
+            )
         else:
-            BAlarmf = 1
-            
-        SIf = st.number_input("Za kolik minut vstanete po probuzení z postele ve volné dny?", min_value=0, value=10, key='SIf')
-        
+            BAlarmf = None
+
+        SIf = st.number_input(
+            "Za kolik minut vstanete po probuzení z postele ve volné dny?",
+            min_value=0, value=10, key='SIf'
+        )
+
         st.markdown("Jak dlouhou dobu strávíte venku na přirozeném světle ve volný den?")
         col_le_f1, col_le_f2 = st.columns(2)
         with col_le_f1:
             LEfh = st.number_input("Hodiny:", min_value=0, value=1, key='LEfh')
         with col_le_f2:
             LEfm = st.number_input("Minuty:", min_value=0, max_value=59, value=0, key='LEfm')
-        LEf = LEfh + LEfm/60
-
+        LEf = LEfh + LEfm / 60    
+    
 
     st.header("3. Doplňující otázky")
 
@@ -232,8 +253,20 @@ with st.form("mctq_form"):
                               [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='Travel',
                                   help="Tedy dále na západ/východ než např. na Island, Kanárské ostrovy, do Dubaje nebo na africký kontinent.")    
     
-        
+    # --- Form submit ---        
     submit_button = st.form_submit_button("Vypočítat chronotyp")
+    
+
+
+# --- Interactivity outside form ---
+# (Ensures instant visibility change without form submission)
+Alarmw_now = st.session_state.get("Alarmw_radio", 0)
+Alarmf_now = st.session_state.get("Alarmf_radio", 0)
+if (Alarmw_now != st.session_state.Alarmw) or (Alarmf_now != st.session_state.Alarmf):
+    st.session_state.Alarmw = Alarmw_now
+    st.session_state.Alarmf = Alarmf_now
+    st.rerun()
+
 
 # --- Calculation and Output Block ---
 
