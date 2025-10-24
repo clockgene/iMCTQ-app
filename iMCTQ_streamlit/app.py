@@ -1,4 +1,4 @@
-# v.2025.10.24.1202
+# v.2025.10.24.1222
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1202.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1222.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
@@ -176,7 +176,7 @@ with st.form("mctq_form"):
         
         # Careful - BAlarmf has opposite meaninf to BAlarmw, used only in MSFsc calculation logic, do not use for analysis
         with st.expander("📅 Pokud ano:"):
-            BAlarmf = st.radio("Potřebujete k probuzení ve volný den použít budík, nebo se pravidelně probouzíte než by zazvonil?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="BAlarmf")                
+            BAlarmf = st.radio("Potřebujete k probuzení ve volný den obvykle použít budík?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="BAlarmf")                
 
         SIf = st.number_input(
             "Za kolik minut vstanete po probuzení z postele ve volné dny?",
@@ -361,13 +361,19 @@ if submit_button:
                 st.info('Jste **sova** (Evening).')
             else:
                 st.info('Jste **extrémní sova** (Late Evening).')
+            
+            if Shift == 1:            
+                st.warning("Z důvodu nedávné práce na směny není váš chronotyp ustálený.")
+            if Travel == 1:            
+                st.warning("Z důvodu nedávného cestování není váš chronotyp ustálený.")
+            
                 
         else:
-            st.warning('Váš přesný chronotyp nelze určit, protože máte nepravidelný režim nebo se budíte až s budíkem i během víkendu.')
+            st.warning('Váš přesný chronotyp nelze určit, protože máte nepravidelný režim, nebo se budíte až s budíkem i během víkendu.')
             
             # Bamid estimate
             if not np.isnan(Bamid):
-                st.info(f'Nicméně, lze přibližně odhadnout (Mid-point of most active time): **{round(Bamid, 2)}**')
+                st.info(f'Nicméně, lze přibližně odhadnout subjektivní chronotyp: **{round(Bamid, 2)}**')
                 if Bamid <= 10.72:
                     st.info('Jste spíše **skřivan**.')
                 elif Bamid <= 13.204:
