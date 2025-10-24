@@ -1,4 +1,4 @@
-# v.2025.10.24.1153
+# v.2025.10.24.1202
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1153.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1202.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
@@ -134,8 +134,7 @@ with st.form("mctq_form"):
 
         
 
-        # --- Alarm logic (interactive via session state) ---
-        
+        # --- Alarm logic (interactive via session state) ---        
         Alarmw = st.radio("Používáte obvykle budík ve všední dny?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="Alarmw")
         
         with st.expander("📅 Pokud ano:"):
@@ -175,6 +174,7 @@ with st.form("mctq_form"):
         # --- Alarm logic (interactive via session state) ---
         Alarmf = st.radio("Máte nějaký důvod, kvůli kterému si nemůžete zvolit čas pro spánek a probouzení ve volné dny?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="Alarmf")
         
+        # Careful - BAlarmf has opposite meaninf to BAlarmw, used only in MSFsc calculation logic, do not use for analysis
         with st.expander("📅 Pokud ano:"):
             BAlarmf = st.radio("Potřebujete k probuzení ve volný den použít budík, nebo se pravidelně probouzíte než by zazvonil?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="BAlarmf")                
 
@@ -321,8 +321,9 @@ if submit_button:
         SDweek = round(((SDw.total_seconds() * WD + SDf.total_seconds() * FD)/7) / 3600, 3)
 
         # Corrected Mid-Sleep on Free Day (MSFsc) - The Chronotype
+        # if using alarm on free days, need waking before both Alarmw and Alarmf
         MSFsc = np.nan
-        if FD > 0 and (Alarmf == 0 or (Alarmf == 1 and BAlarmf == 0)):
+        if FD > 0 and (Alarmf == 0 or (Alarmf == 1 and (BAlarmf == 0 and BAlarmw == 1))):
             if SDf_i <= SDw_i:
                 MSFsc = MSF
             else:
