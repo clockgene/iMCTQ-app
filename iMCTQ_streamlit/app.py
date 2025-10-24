@@ -1,4 +1,4 @@
-# v.2025.10.24.1239
+# v.2025.10.24.1250
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1239.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1250.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
@@ -201,10 +201,15 @@ with st.form("mctq_form"):
     
     Slequal = slequal_options[Slequal_key] # Store the text description if needed later
 
-    Bastart = st.time_input("**Kdy se během dne začínáte cítit psychicky nejaktivnější?**", time(9, 0), key='Bastart')
+    # Bastart = st.time_input("**Kdy se během dne začínáte cítit mentálně nejaktivnější (nejlépe se soustředíte, učíte apod.)?**", time(9, 0), key='Bastart')
+    
+    st.markdown("**Kdy se během dne začínáte cítit mentálně nejaktivnější (nejlépe se soustředíte, učíte apod.)?**")
+    col_bs1 = st.columns(1)
+    with col_bs1:
+        Bastart = st.time_input("Čas (HH:MM):", time(9, 0), key='Bastart_time')
     
     # Custom handling for Baend (can be past midnight)
-    st.markdown("Kdy se během dne přestáváte cítit psychicky nejaktivnější?")
+    st.markdown("**Kdy se během dne přestáváte cítit mentálně nejaktivnější?**")
     col_ba1, col_ba2 = st.columns(2)
     with col_ba1:
         Baend_time = st.time_input("Čas (HH:MM):", time(17, 0), key='Baend_time')
@@ -231,22 +236,7 @@ with st.form("mctq_form"):
         with col_se1:
             Shifte = st.time_input("Čas (HH:MM):", time(3, 0), key='Shifte')
         with col_se2:
-            Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)", key='Shifte_past_midnight')
-    
-    
-    # st.markdown("V kolik hodin obvykle začala vaše směna?")
-    # col_sh1, col_sh2 = st.columns(2)
-    # with col_sh1:
-    #     Shifts = st.time_input("Čas (HH:MM):", time(23, 0), key='Shifts')
-    # with col_sh2:
-    #     Shifts_past_midnight = st.checkbox("Čas je po půlnoci (např. 01:00 ráno)", key='Shifts_past_midnight')
-
-    # st.markdown("V kolik hodin obvykle zkončila vaše směna?")
-    # col_se1, col_se2 = st.columns(2)
-    # with col_se1:
-    #     Shifte = st.time_input("Čas (HH:MM):", time(3, 0), key='Shifte')
-    # with col_se2:
-    #     Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)", key='Shifte_past_midnight')
+            Shifte_past_midnight = st.checkbox("Čas je po půlnoci (např. 03:00 ráno)", key='Shifte_past_midnight')    
 
 
     Travel = st.radio("**Cestoval jste během posledního měsíce letecky do zahraničí přes 3 nebo více časových pásem?**", 
