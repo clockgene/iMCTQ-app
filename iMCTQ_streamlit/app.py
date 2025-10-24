@@ -1,4 +1,4 @@
-# v.2025.10.24.1139
+# v.2025.10.24.1146
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1139.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1146.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
@@ -135,21 +135,13 @@ with st.form("mctq_form"):
         
 
         # --- Alarm logic (interactive via session state) ---
-        Alarmw = st.radio(
-            "Používáte obvykle budík ve všední dny?",
-            [1, 0],
-            format_func=lambda x: "Ano" if x == 1 else "Ne",
-            key="Alarmw",
-            on_change=lambda: st.rerun()  # 🔥 Forces immediate update
-        )
         
-        if st.session_state.Alarmw == 1:
-            BAlarmw = st.radio(
-                "Probouzíte se pravidelně před tím, než budík zazvoní?",
-                [1, 0],
-                format_func=lambda x: "Ano" if x == 1 else "Ne",
-                key="BAlarmw"
-            )
+        Alarmw = st.radio("Používáte obvykle budík ve všední dny?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="Alarmw")
+        
+        if Alarmw == 1:
+            with st.expander("📅 Další otázka o budíku"):
+                BAlarmw = st.radio("Probouzíte se pravidelně před tím, než budík zazvoní?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="BAlarmw")        
+        
 
         SIw = st.number_input(
             "Za kolik minut vstanete po probuzení z postele ve všední dny?",
@@ -182,22 +174,11 @@ with st.form("mctq_form"):
         SEf = st.time_input("V kolik hodin se obvykle probouzíte ve volné dny?", time(9, 0), key='SEf')
 
         # --- Alarm logic (interactive via session state) ---
+        Alarmf = st.radio("Máte nějaký důvod, kvůli kterému si nemůžete zvolit čas pro spánek a probouzení ve volné dny?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="Alarmf")
         
-        Alarmf = st.radio(
-            "Máte nějaký důvod, kvůli kterému si nemůžete zvolit čas pro spánek a probouzení ve volné dny?",
-            [1, 0],
-            format_func=lambda x: "Ano" if x == 1 else "Ne",
-            key="Alarmf",
-            on_change=lambda: st.rerun()
-        )
-        
-        if st.session_state.Alarmf == 1:
-            BAlarmf = st.radio(
-                "Potřebujete obvykle k probuzení ve volný den použít budík?",
-                [1, 0],
-                format_func=lambda x: "Ano" if x == 1 else "Ne",
-                key="BAlarmf"
-            )
+        if Alarmf == 1:
+            with st.expander("📅 Další otázka o budíku"):
+                BAlarmf = st.radio("Potřebujete k probuzení ve volný den použít budík, nebo se pravidelně probouzíte před než by zazvonil?", [1, 0], format_func=lambda x: "Ano" if x == 1 else "Ne", key="BAlarmf")                
 
         SIf = st.number_input(
             "Za kolik minut vstanete po probuzení z postele ve volné dny?",
