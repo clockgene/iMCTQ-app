@@ -204,7 +204,7 @@ with st.form("mctq_form"):
     # Bastart = st.time_input("**Kdy se během dne začínáte cítit mentálně nejaktivnější (nejlépe se soustředíte, učíte apod.)?**", time(9, 0), key='Bastart')
     
     st.markdown("**Kdy se během dne začínáte cítit mentálně nejaktivnější (nejlépe se soustředíte, učíte apod.)?**")
-    col_bs1 = st.columns(1)
+    col_bs1, col_bs2  = st.columns(2)
     with col_bs1:
         Bastart = st.time_input("Čas (HH:MM):", time(9, 0), key='Bastart_time')
     
