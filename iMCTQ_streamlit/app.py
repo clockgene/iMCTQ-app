@@ -1,10 +1,26 @@
-# v.2025.10.24.1018
+# v.2025.10.24.1045
 import streamlit as st
 import datetime
 # import pandas as pd
 import numpy as np
 from datetime import time, timedelta, datetime as dt
 import gspread
+import subprocess
+
+# Show the current GitHub commit hash for clarity
+try:
+    commit_hash = subprocess.getoutput("git rev-parse --short HEAD")
+except Exception:
+    commit_hash = "unknown"
+
+# Sidebar or top-right "Reload" button
+st.sidebar.markdown(f"**🧬 Build version:** `{commit_hash}`")
+
+if st.sidebar.button("🔄 Reload app from GitHub"):
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    st.rerun()
+
 
 # --- Helper Function to handle cross-midnight time subtraction ---
 def time_to_datetime(t, base_date):
