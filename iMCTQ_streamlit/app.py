@@ -1,6 +1,6 @@
 import streamlit as st
 import datetime
-import pandas as pd
+# import pandas as pd
 import numpy as np
 from datetime import time, timedelta, datetime as dt
 import gspread
@@ -94,6 +94,7 @@ with st.form("mctq_form"):
 
     
     # --- Working Days (VŠEDNÍ DNY) Block ---
+
     if WD > 0 and WD < 8:
         st.subheader("2.1. Režim během **VŠEDNÍCH** (pracovních) dnů ({})".format(WD))
         
@@ -111,6 +112,9 @@ with st.form("mctq_form"):
         
         if Alarmw == 1:
             BAlarmw = st.radio("Probouzíte se pravidelně před tím, než budík zazvoní?", [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='BAlarmw')
+        
+        else:
+            BAlarmw = 0
         
         SIw = st.number_input("Za kolik minut vstanete po probuzení z postele ve všední dny?", min_value=0, value=5, key='SIw')
         
@@ -145,6 +149,9 @@ with st.form("mctq_form"):
         
         if Alarmf == 1:
             BAlarmf = st.radio("Potřebujete obvykle k probuzení ve volný den použít budík?", [1, 0], format_func=lambda x: 'Ano' if x == 1 else 'Ne', index=1, key='BAlarmf')
+            
+        else:
+            BAlarmf = 1
             
         SIf = st.number_input("Za kolik minut vstanete po probuzení z postele ve volné dny?", min_value=0, value=10, key='SIf')
         
