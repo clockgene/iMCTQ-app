@@ -1,4 +1,4 @@
-# v.2025.10.24.1045
+# v.2025.10.24.1056
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -60,7 +60,7 @@ slequal_options = {
 
 st.set_page_config(page_title="Chronotypový Kalkulátor (MCTQ)", layout="wide")
 st.title("Chronotypový Kalkulátor")
-st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**.")
+st.markdown("Na základě upraveného dotazníku **MCTQ (Munich ChronoType Questionnaire)**, v.2025.10.24.1056.")
 
 # Use a form to group all inputs and trigger the calculation only on submit
 with st.form("mctq_form"):
