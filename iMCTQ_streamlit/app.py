@@ -1,4 +1,4 @@
-# v.2025.10.24.1250
+# v.2025.11.18.0840
 import streamlit as st
 import datetime
 # import pandas as pd
@@ -68,7 +68,9 @@ with st.form("mctq_form"):
     st.header("1. Základní informace")
     
     # --- Personal Info ---
-    col1, col2, col3 = st.columns(3)
+    col0, col1, col2, col3 = st.columns(4)
+    with col0:
+        subject = st.text_input("Zadejte přidělený identifikátor:", value="id00001")
     with col1:
         age = st.number_input("Věk:", min_value=10, max_value=100, value=30, step=1)
     with col2:
@@ -351,7 +353,7 @@ if submit_button:
         
         # Chronotype Display
         if not np.isnan(MSFsc):
-            st.success(f'Váš **chronotyp** (MSFsc) je: **{round(MSFsc, 2)}**')
+            st.success(f'Váš **chronotyp** (MSFsc) je: **{round(MSFsc, 2)} hodin**')
             st.write("")
             
             # Classification
@@ -415,6 +417,7 @@ if submit_button:
                 
         # 3.1. Create a dictionary of results
         vd = {
+            'subject': subject,
             'ID': dt.now().strftime('%Y-%m-%d_%H-%M-%S.%f'), # Unique ID
             'age': age,
             'sex': sex,
@@ -483,7 +486,7 @@ if submit_button:
             workbook = gc.open_by_key(SHEET_ID)
 
             # Try to get worksheet by name; if missing, list available sheets for debugging
-            SHEET_NAME = "iMCTQ_streamlit_responses_2025"
+            SHEET_NAME = "iMCTQ_streamlit_responses_2025_id"
             try:
                 worksheet = workbook.worksheet(SHEET_NAME)
             except gspread.exceptions.WorksheetNotFound:
